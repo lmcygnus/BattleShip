@@ -9,6 +9,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/template.html',
       inject: 'body',
+      title: 'Development',
     }),
   ],
   output: {
