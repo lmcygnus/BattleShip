@@ -95,8 +95,4 @@ class Gameboard {
   }
 }
 
-const g = new Gameboard();
-
-console.log(g.receiveAttack([1, 1]));
-
-export default { Gameboard };
+export { Gameboard };

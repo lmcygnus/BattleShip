@@ -17,4 +17,4 @@ class Ship {
   }
 }
 
-export default { Ship };
+export { Ship };

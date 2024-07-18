@@ -6,4 +6,4 @@ class Square {
   }
 }
 
-export default { Square };
+export { Square };
