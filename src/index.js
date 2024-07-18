@@ -20,8 +20,13 @@ const computerPlayer = new Player('Computer');
 
 const placeShipsButton = document.querySelector('.placeRandom');
 
-function placeShips(player, vertical) {
+function getRandomBoolean() {
+  return Math.random() >= 0.5;
+}
+
+function placeShips(player) {
   ships.forEach((ship) => {
+    const vertical = getRandomBoolean();
     const coord = player.gameboard.randomCoord();
     player.gameboard.placeShips(ship, vertical, coord);
   });
@@ -46,7 +51,7 @@ function color(player) {
   });
 }
 
-placeShips(humanPlayer, false);
+placeShips(humanPlayer);
 
 createGameboard(playerGameboard);
 //createGameboard(computerGameboard);
