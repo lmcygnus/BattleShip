@@ -12,12 +12,10 @@ function createGameboard(parent) {
 }
 
 const ships = [new Ship(2), new Ship(3), new Ship(4), new Ship(3), new Ship(5)];
-
 const playerGameboard = document.querySelector('.player');
 const computerGameboard = document.querySelector('.computer');
 const humanPlayer = new Player('You');
 const computerPlayer = new Player('Computer');
-
 const placeShipsButton = document.querySelector('.placeRandom');
 
 function getRandomBoolean() {
@@ -25,6 +23,7 @@ function getRandomBoolean() {
 }
 
 function placeShips(player) {
+  player.gameboard.deleteAllShips();
   ships.forEach((ship) => {
     const vertical = getRandomBoolean();
     const coord = player.gameboard.randomCoord();
@@ -41,18 +40,23 @@ function findIndex(coords, player) {
   return result;
 }
 
-function color(player) {
-  const squares = document.querySelectorAll('.square');
+function squareColor(player, color, board) {
+  placeShips(player);
+  const squares = board.querySelectorAll('.square');
+  squares.forEach((square) => {
+    square.style.backgroundColor = '#ffffff';
+  });
   const coords = player.gameboard.ships;
   const indexes = findIndex(coords, player);
-  console.log(indexes);
   indexes.forEach((index) => {
-    squares[index].style.backgroundColor = '#000000';
+    squares[index].style.backgroundColor = color;
   });
 }
 
-placeShips(humanPlayer);
-
+createGameboard(computerGameboard);
 createGameboard(playerGameboard);
-//createGameboard(computerGameboard);
-color(humanPlayer);
+
+placeShipsButton.addEventListener('click', () => {
+  squareColor(humanPlayer, 'red', playerGameboard);
+  squareColor(computerPlayer, 'white', computerGameboard);
+});

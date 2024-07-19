@@ -93,6 +93,11 @@ class Gameboard {
     }
     return gameOver;
   }
+
+  deleteAllShips() {
+    this.ships = [];
+    this.board = this.createGameboard();
+  }
 }
 
 export { Gameboard };

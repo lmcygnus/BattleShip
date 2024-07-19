@@ -1,3 +1,7 @@
+header {
+    display: flex;
+    justify-content: center;
+}
 .container {
     display: flex;
     justify-content: center;
@@ -16,4 +20,11 @@
 }
 .square {
     border: 1px solid rgb(112, 107, 107);
+}
+
+.placeRandom {
+    background-color: none;
+    border-radius: 16px;
+    padding: 10px;
+    border: 3px solid brown;
 }
