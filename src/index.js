@@ -55,20 +55,24 @@ function squareColor(player, color, board) {
   });
 }
 
-function startGame(board, player) {
+function startGame(board, player1, player2) {
   placeShipsButton.style.display = 'none';
   resetButton.style.display = 'block';
-
   const squares = board.querySelectorAll('.square');
-  squares.forEach((square) => {
+
+  function handleSquareClick(square) {
     square.addEventListener('click', () => {
-      if (player.gameboard.board[square.dataset.index].ship !== false) {
-        square.style.backgroundColor = 'brown';
+      if (player1.gameboard.board[square.dataset.index].ship !== false) {
+        square.style.backgroundColor = 'salmon';
+        player1.gameboard.board[square.dataset.index].ship.hit();
+      } else {
+        square.style.backgroundColor = 'royalblue';
       }
-      else {
-        square.style.backgroundColor = 'blue';
-      }
+      square.removeEventListener('click', handleSquareClick);
     });
+  }
+  squares.forEach((square) => {
+    square.addEventListener('click', handleSquareClick(square));
   });
 }
 
@@ -76,11 +80,21 @@ createGameboard(computerGameboard);
 createGameboard(playerGameboard);
 
 placeShipsButton.addEventListener('click', () => {
-  squareColor(humanPlayer, 'red', playerGameboard);
+  squareColor(humanPlayer, 'salmon', playerGameboard);
   squareColor(computerPlayer, 'white', computerGameboard);
   startGameButton.style.display = 'block';
 });
 
 startGameButton.addEventListener('click', () => {
   startGame(computerGameboard, computerPlayer);
+  startGameButton.style.display = 'none';
+});
+
+resetButton.addEventListener('click', () => {
+  placeShipsButton.style.display = 'block';
+  resetButton.style.display = 'none';
+  const squares = document.querySelectorAll('.square');
+  squares.forEach((square) => {
+    square.style.backgroundColor = '#ffffff';
+  });
 });
