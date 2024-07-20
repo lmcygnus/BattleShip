@@ -55,14 +55,19 @@ function squareColor(player, color, board) {
   });
 }
 
-function startGame(board) {
+function startGame(board, player) {
   placeShipsButton.style.display = 'none';
   resetButton.style.display = 'block';
 
   const squares = board.querySelectorAll('.square');
   squares.forEach((square) => {
     square.addEventListener('click', () => {
-      square.style.backgroundColor = 'blue';
+      if (player.gameboard.board[square.dataset.index].ship !== false) {
+        square.style.backgroundColor = 'brown';
+      }
+      else {
+        square.style.backgroundColor = 'blue';
+      }
     });
   });
 }
@@ -73,8 +78,9 @@ createGameboard(playerGameboard);
 placeShipsButton.addEventListener('click', () => {
   squareColor(humanPlayer, 'red', playerGameboard);
   squareColor(computerPlayer, 'white', computerGameboard);
+  startGameButton.style.display = 'block';
 });
 
 startGameButton.addEventListener('click', () => {
-  startGame(computerGameboard);
+  startGame(computerGameboard, computerPlayer);
 });
