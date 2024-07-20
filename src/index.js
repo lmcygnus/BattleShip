@@ -55,24 +55,47 @@ function squareColor(player, color, board) {
   });
 }
 
-function startGame(board, player1, player2) {
+function randomPoint() {
+  const randomPoint = computerPlayer.gameboard.findIndex(computerPlayer.gameboard.randomCoord());
+  if (!humanPlayer.gameboard.missedAtacks.includes(randomPoint)) {
+    return randomPoint;
+  }
+  randomPoint();
+}
+
+function computerTurn() {
+  const point = randomPoint();
+  const squares = playerGameboard.querySelectorAll('.square');
+  const square = squares[point];
+  if (humanPlayer.gameboard.board[square.dataset.index].ship !== false) {
+    square.style.backgroundColor = 'firebrick';
+    humanPlayer.gameboard.board[square.dataset.index].ship.hit();
+  } else {
+    square.style.backgroundColor = 'royalblue';
+    humanPlayer.gameboard.missedAtacks += randomPoint;
+  }
+}
+
+function handleSquareClick(square, player) {
+  square.addEventListener('click', () => {
+    if (player.gameboard.board[square.dataset.index].ship !== false) {
+      square.style.backgroundColor = 'salmon';
+      player.gameboard.board[square.dataset.index].ship.hit();
+    } else {
+      square.style.backgroundColor = 'royalblue';
+      player.gameboard.missedAtacks += square.dataset.index;
+    }
+    square.removeEventListener('click', handleSquareClick);
+    computerTurn();
+  });
+}
+
+function startGame(board) {
   placeShipsButton.style.display = 'none';
   resetButton.style.display = 'block';
   const squares = board.querySelectorAll('.square');
-
-  function handleSquareClick(square) {
-    square.addEventListener('click', () => {
-      if (player1.gameboard.board[square.dataset.index].ship !== false) {
-        square.style.backgroundColor = 'salmon';
-        player1.gameboard.board[square.dataset.index].ship.hit();
-      } else {
-        square.style.backgroundColor = 'royalblue';
-      }
-      square.removeEventListener('click', handleSquareClick);
-    });
-  }
   squares.forEach((square) => {
-    square.addEventListener('click', handleSquareClick(square));
+    square.addEventListener('click', handleSquareClick(square, computerPlayer));
   });
 }
 
