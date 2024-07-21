@@ -10,6 +10,7 @@ const computerPlayer = new Player('Computer');
 const placeShipsButton = document.querySelector('.placeRandom');
 const startGameButton = document.querySelector('.start');
 const resetButton = document.querySelector('.reset');
+const dialog = document.querySelector('dialog');
 
 function createGameboard(parent) {
   for (let i = 0; i < 100; i += 1) {
@@ -33,34 +34,34 @@ function placeShips(player) {
   });
 }
 
-function findIndex(coords, player) {
-  const result = [];
-  coords.forEach((coord) => {
-    const index = player.gameboard.findIndex(coord);
-    result.push(index);
-  });
-  return result;
-}
-
 function squareColor(player, color, board) {
   placeShips(player);
   const squares = board.querySelectorAll('.square');
   squares.forEach((square) => {
     square.style.backgroundColor = '#ffffff';
   });
-  const coords = player.gameboard.ships;
-  const indexes = findIndex(coords, player);
+  const indexes = player.gameboard.ships;
   indexes.forEach((index) => {
     squares[index].style.backgroundColor = color;
   });
 }
 
 function randomPoint() {
-  const randomPoint = computerPlayer.gameboard.findIndex(computerPlayer.gameboard.randomCoord());
-  if (!humanPlayer.gameboard.missedAtacks.includes(randomPoint)) {
-    return randomPoint;
+  const point = computerPlayer.gameboard.findIndex(computerPlayer.gameboard.randomCoord());
+  if (!humanPlayer.gameboard.missedAtacks.includes(point)) {
+    return point;
   }
   randomPoint();
+}
+
+function checkWinner(player1, player2) {
+  if (player1.gameboard.allShipsSunk()) {
+    dialog.textContent = `The winner is: ${player2.name}`;
+    dialog.showModal();
+  } else if (player2.gameboard.allShipsSunk()) {
+    dialog.textContent = `The winner is: ${player1.name}`;
+    dialog.showModal();
+  }
 }
 
 function computerTurn() {
@@ -70,10 +71,12 @@ function computerTurn() {
   if (humanPlayer.gameboard.board[square.dataset.index].ship !== false) {
     square.style.backgroundColor = 'firebrick';
     humanPlayer.gameboard.board[square.dataset.index].ship.hit();
+    humanPlayer.gameboard.missedAtacks += point;
   } else {
     square.style.backgroundColor = 'royalblue';
-    humanPlayer.gameboard.missedAtacks += randomPoint;
+    humanPlayer.gameboard.missedAtacks += point;
   }
+  checkWinner(humanPlayer, computerPlayer);
 }
 
 function handleSquareClick(square, player) {
@@ -87,6 +90,7 @@ function handleSquareClick(square, player) {
     }
     square.removeEventListener('click', handleSquareClick);
     computerTurn();
+    checkWinner(humanPlayer, computerPlayer);
   });
 }
 
@@ -104,12 +108,12 @@ createGameboard(playerGameboard);
 
 placeShipsButton.addEventListener('click', () => {
   squareColor(humanPlayer, 'salmon', playerGameboard);
-  squareColor(computerPlayer, 'white', computerGameboard);
+  squareColor(computerPlayer, 'blue', computerGameboard);
   startGameButton.style.display = 'block';
 });
 
 startGameButton.addEventListener('click', () => {
-  startGame(computerGameboard, computerPlayer);
+  startGame(computerGameboard);
   startGameButton.style.display = 'none';
 });
 

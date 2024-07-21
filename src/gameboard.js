@@ -57,10 +57,10 @@ class Gameboard {
       for (let i = 0; i < ship.length; i += 1) {
         if (vertical === false) {
           this.board[index + i].ship = ship;
-          this.ships.push(this.board[index + i].coord);
+          this.ships.push(this.findIndex(this.board[index + i].coord));
         } else {
           this.board[index + (i * 10)].ship = ship;
-          this.ships.push(this.board[index + (i * 10)].coord);
+          this.ships.push(this.findIndex(this.board[index + (i * 10)].coord));
         }
       }
       return this.board;
