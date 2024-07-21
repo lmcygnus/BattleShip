@@ -5,7 +5,7 @@ class Gameboard {
   constructor() {
     this.board = this.createGameboard();
     this.ships = [];
-    this.missedAtacks = [];
+    this.missedAttacks = [];
   }
 
   createGameboard() {
@@ -70,28 +70,22 @@ class Gameboard {
   }
 
   receiveAttack(sCoord) {
-    const index = this.findIndex(sCoord);
+    const index = sCoord;
     const square = this.board[index];
+    square.attacked = true;
     if (square.ship !== false) {
-      square.attacked = true;
       square.ship.hit();
       return true;
     }
-    this.missedAtacks.push(sCoord);
+    this.missedAttacks.push(sCoord);
     return false;
   }
 
   allShipsSunk() {
-    const shipsCoords = this.ships;
-    let gameOver = true;
-    for (const shipCoord of shipsCoords) {
-      const index = this.findIndex(shipCoord);
+    return this.ships.every((index) => {
       const sqr = this.board[index];
-      if (!sqr.ship.isSunk()) {
-        gameOver = false;
-      }
-    }
-    return gameOver;
+      return sqr.attacked;
+    });
   }
 
   deleteAllShips() {

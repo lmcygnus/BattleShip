@@ -35,7 +35,6 @@ function placeShips(player) {
 }
 
 function squareColor(player, color, board) {
-  placeShips(player);
   const squares = board.querySelectorAll('.square');
   squares.forEach((square) => {
     square.style.backgroundColor = '#ffffff';
@@ -48,18 +47,18 @@ function squareColor(player, color, board) {
 
 function randomPoint() {
   const point = computerPlayer.gameboard.findIndex(computerPlayer.gameboard.randomCoord());
-  if (!humanPlayer.gameboard.missedAtacks.includes(point)) {
+  if (humanPlayer.gameboard.board[point].attacked === false) {
     return point;
   }
-  randomPoint();
+  return randomPoint();
 }
 
-function checkWinner(player1, player2) {
-  if (player1.gameboard.allShipsSunk()) {
-    dialog.textContent = `The winner is: ${player2.name}`;
+function checkWinner() {
+  if (computerPlayer.gameboard.allShipsSunk() === true) {
+    dialog.textContent = `The winner is: ${humanPlayer.name}`;
     dialog.showModal();
-  } else if (player2.gameboard.allShipsSunk()) {
-    dialog.textContent = `The winner is: ${player1.name}`;
+  } else if (humanPlayer.gameboard.allShipsSunk() === true) {
+    dialog.textContent = `The winner is: ${computerPlayer.name}`;
     dialog.showModal();
   }
 }
@@ -70,28 +69,24 @@ function computerTurn() {
   const square = squares[point];
   if (humanPlayer.gameboard.board[square.dataset.index].ship !== false) {
     square.style.backgroundColor = 'firebrick';
-    humanPlayer.gameboard.board[square.dataset.index].ship.hit();
-    humanPlayer.gameboard.missedAtacks += point;
+    humanPlayer.gameboard.receiveAttack(point);
   } else {
     square.style.backgroundColor = 'royalblue';
-    humanPlayer.gameboard.missedAtacks += point;
+    humanPlayer.gameboard.receiveAttack(point);
   }
-  checkWinner(humanPlayer, computerPlayer);
+  checkWinner();
 }
 
-function handleSquareClick(square, player) {
-  square.addEventListener('click', () => {
-    if (player.gameboard.board[square.dataset.index].ship !== false) {
-      square.style.backgroundColor = 'salmon';
-      player.gameboard.board[square.dataset.index].ship.hit();
-    } else {
-      square.style.backgroundColor = 'royalblue';
-      player.gameboard.missedAtacks += square.dataset.index;
-    }
-    square.removeEventListener('click', handleSquareClick);
-    computerTurn();
-    checkWinner(humanPlayer, computerPlayer);
-  });
+function handleSquareClick(event) {
+  const square = event.target;
+  if (computerPlayer.gameboard.board[square.dataset.index].ship !== false) {
+    square.style.backgroundColor = 'salmon';
+    computerPlayer.gameboard.receiveAttack(square.dataset.index);
+  } else {
+    square.style.backgroundColor = 'royalblue';
+  }
+  computerTurn();
+  square.removeEventListener('click', handleSquareClick);
 }
 
 function startGame(board) {
@@ -99,7 +94,7 @@ function startGame(board) {
   resetButton.style.display = 'block';
   const squares = board.querySelectorAll('.square');
   squares.forEach((square) => {
-    square.addEventListener('click', handleSquareClick(square, computerPlayer));
+    square.addEventListener('click', handleSquareClick);
   });
 }
 
@@ -107,6 +102,9 @@ createGameboard(computerGameboard);
 createGameboard(playerGameboard);
 
 placeShipsButton.addEventListener('click', () => {
+  placeShips(humanPlayer);
+  placeShips(computerPlayer);
+  console.log(computerPlayer.gameboard.ships);
   squareColor(humanPlayer, 'salmon', playerGameboard);
   squareColor(computerPlayer, 'blue', computerGameboard);
   startGameButton.style.display = 'block';
@@ -123,5 +121,7 @@ resetButton.addEventListener('click', () => {
   const squares = document.querySelectorAll('.square');
   squares.forEach((square) => {
     square.style.backgroundColor = '#ffffff';
+    square.removeEventListener('click', handleSquareClick);
   });
 });
+
